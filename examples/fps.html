@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>perf.js - fps</title>
+
+    <style type="text/css">
+        html {
+            font-family:"Lucida Grande","Tahoma","Verdana","Arial",sans-serif;
+        }
+        * {
+            box-sizing:border-box;
+            -moz-box-sizing:border-box;
+            -webkit-box-sizing:border-box;
+        }
+        #fps {
+            border-radius:5px;
+            font-size:200%;
+            text-align:center;
+            text-shadow:0 1px #ffffff;
+            opacity:.85;
+            position:absolute;
+            top:50%;
+            left:50%;
+            margin-top:-100px;
+            margin-left:-125px;
+            padding:50px;
+            width:250px;
+            z-index:1000;
+        }
+
+        #fps.awful { background-color:#ffcccc; }
+        #fps.poor { background-color:#ffe6cc; }
+        #fps.ok { background-color:#ffffcc; }
+        #fps.good { background-color:#e6ffcc; }
+        #fps.great { background-color:#ccffcc; }
+
+        #canvas div {
+            border:1px solid #aeaeae;
+            border-radius:5px;
+            color:#222222;
+            text-shadow:1px 1px #ffffff;
+            padding:5px;
+            margin:10px;
+
+            opacity:0.5;
+
+            box-shadow:0 2px 5px 0 #cbcbcb;
+            -moz-box-shadow:0 2px 5px 0 #cbcbcb;
+            -webkit-box-shadow:0 2px 5px 0 #cbcbcb;
+
+            background-clip:padding-box;
+            -moz-background-clip:padding-box;
+            -webkit-background-clip:padding-box;
+
+            background-image: linear-gradient(top, rgb(245,245,245) 0%, rgb(227,227,227) 100%);
+            background-image: -o-linear-gradient(top, rgb(245,245,245) 0%, rgb(227,227,227) 100%);
+            background-image: -moz-linear-gradient(top, rgb(245,245,245) 0%, rgb(227,227,227) 100%);
+            background-image: -webkit-linear-gradient(top, rgb(245,245,245) 0%, rgb(227,227,227) 100%);
+            background-image: -ms-linear-gradient(top, rgb(245,245,245) 0%, rgb(227,227,227) 100%);
+        }
+    </style>
+</head>
+<body>
+    <div id="fps"></div>
+    <div id="canvas"></div>
+
+    <script src="../src/perf.js"></script>
+    <script>
+        perf.fps(function () {
+            var canvas = document.getElementById('canvas');
+            canvas.innerHTML = '';
+            for (var i=0; i<10; i++) {
+                var node = document.createElement('div');
+                canvas.appendChild(node);
+                node.innerHTML = 'node-'+i;
+            }
+        }, function (fps, formatted) {
+            var el = document.getElementById('fps');
+            el.innerHTML = formatted;
+            if (fps >= 60) {
+                el.className = 'great';
+            } else if (fps >= 55) {
+                el.className = 'good';
+            } else if (fps >= 50) {
+                el.className = 'ok';
+            } else if (fps >= 45) {
+                el.className = 'poor';
+            } else {
+                el.className = 'awful';
+            }
+        });
+    </script>
+</body>
+</html>
