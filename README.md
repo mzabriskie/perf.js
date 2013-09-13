@@ -11,7 +11,7 @@ Measure how long a function takes to execute
 ##### target
 The function that you would like to measure performance for
 
-##### callback
+##### callback(duration, formatted)
 The function that is called once performance has been measured
 
 ###### Arguments
@@ -24,7 +24,7 @@ Measure how many frames per second a function executes
 ##### target
 The function that will perform rendering
 
-##### callback
+##### callback(fps, formatted)
 The function that is called when FPS is updated
 
 ###### Arguments
@@ -34,7 +34,7 @@ The function that is called when FPS is updated
 #### bandwidth(callback:fn)
 Measure bit-rate of network connection
 
-##### callback
+##### callback(bps)
 The function that is called once bandwidth has been measured
 
 ###### Arguments
