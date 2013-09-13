@@ -34,7 +34,7 @@ function callback(duration, formatted) {
 perf.time(loop, callback);
 ```
 
-### fps(target:fn, callback:fn[, limit:int])
+### fps(target:fn, callback:fn[, count:int])
 Measure how many frames per second a function executes
 
 ##### target
@@ -47,7 +47,7 @@ The function that is called when FPS is updated
 * `fps` - Frames per second as a float
 * `formatted` - Frames per second formated (e.g., 139.6fps)
 
-##### limit
+##### count
 The total number of times to run `target`
 
 ##### Example
