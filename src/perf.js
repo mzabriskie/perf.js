@@ -1,3 +1,26 @@
+/*
+
+ Copyright (c) 2013 by Matt Zabriskie
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+
+ */
 (function (global) {
 
     var perf = {};
@@ -62,10 +85,10 @@
          *
          * @param {Function} target The function that will perform rendering
          * @param {Function} callback The function that is called when FPS is updated
-         * @param {Number} [limit] The total number of times to run <code>target</code>
+         * @param {Number} [count] The total number of times to run <code>target</code>
          */
-        perf.fps = function (target, callback, limit) {
-            var fps = 0, count = 0, timer,
+        perf.fps = function (target, callback, count) {
+            var fps = 0, counter = 0, timer,
                 now, last = Date.now() - 1;
 
             timer = setInterval(function () {
@@ -81,13 +104,13 @@
                 }
                 last = now;
 
-                if (typeof limit !== 'undefined' && ++count >= limit) {
+                if (typeof count !== 'undefined' && ++counter >= count) {
                     clearInterval(timer);
                     callback.call(this, fps, fps.toFixed(1) + 'fps');
                 }
             }, 1);
 
-            if (typeof limit === 'undefined') {
+            if (typeof count === 'undefined') {
                 callback.call(this, fps, fps.toFixed(1) + 'fps');
                 setInterval(function () { callback.call(this, fps, fps.toFixed(1) + 'fps'); }, 1000);
             }
@@ -96,8 +119,35 @@
 
     // perf.bandwidth
     (function (perf) {
-        var BITS = 8, // Bits in a byte
+        var COUNT = 5, // This has proven to be the most accurate sample size
+            BITS = 8, // Bits in a byte
             SIZE = 2095282 * BITS; // Bit size of download
+
+        /**
+         * Perform a sample of the bit-rate
+         *
+         * @param {Array} samples All the samples that have been taken
+         * @param {Function} callback The function that is called once all samples are complete
+         */
+        function sample(samples, callback) {
+            var img = new Image(), now;
+
+            img.onload = function () {
+                var diff = (Date.now() - now) / 1000;
+                samples.push(diff);
+
+                if (samples.length === COUNT) {
+                    var sum = 0;
+                    for (var i=0; i<COUNT; i++) {
+                        sum += samples[i];
+                    }
+                    callback.call(this, SIZE / (sum / COUNT));
+                }
+            };
+
+            now = Date.now();
+            img.src = 'http://db.tt/tXnz4GRs?r=' + Math.floor(Math.random() * now);
+        }
 
         /**
          * Measure bit-rate of network connection
@@ -105,15 +155,11 @@
          * @param {Function} callback The function that is called once bandwidth has been measured
          */
         perf.bandwidth = function (callback) {
-            var img = new Image(), now;
+            var samples = [];
 
-            img.onload = function () {
-                var diff = (Date.now() - now) / 1000;
-                callback.call(this, SIZE / diff);
-            };
-
-            now = Date.now();
-            img.src = 'http://db.tt/tXnz4GRs?r=' + Math.floor(Math.random() * now);
+            for (var i=0; i<COUNT; i++) {
+                sample(samples, callback);
+            }
         };
     })(perf);
 
