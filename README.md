@@ -76,6 +76,9 @@ The function that is called once bandwidth has been measured
 ###### Arguments
 * `bps` - Bits per second as a float
 
+###### Note
+This method is a bit finicky. Looking for a more consistent algorithm.
+
 ##### Example
 
 ```js
